@@ -16,10 +16,10 @@ private:
     bool controlUnit; // UC
     Memory* memory;
 
-    // Metodo para obtener indice de memoria desde un operando
+    // Method to obtain memory index from operand
     int getMemoryIndex(string operand) {
         if (!operand.empty() && operand[0] == 'D') {
-            // Extrae el numero despues de 'D'
+            // Extracts the number after 'D'
             return stoi(operand.substr(1));
         }
         return -1;
@@ -35,7 +35,7 @@ public:
         controlUnit = true;  
     }
     
-    // Metodo para cargar un valor en memoria
+    // Method to load a value into memory
     void SET(vector<string> args) {
         int address = getMemoryIndex(args[1]);
         int value = stoi(args[2]);
@@ -44,7 +44,7 @@ public:
         }
     }
     
-    // Metodo para cargar un valor de memoria a ACC
+    // Method to load a value from memory to ACC
     void LDR(vector<string> args) {
         int address = getMemoryIndex(args[1]);
         if (address != -1) {
@@ -55,9 +55,9 @@ public:
         }
     }
     
-    // Metodo para sumar valores de memoria
+    // Method to sum memory values
     void ADD(vector<string> args) {
-        // Primera forma: ADD D1 NULL NULL
+        // First way: ADD D1 NULL NULL
         if (args.size() >= 2 && args[2] == "NULL") {
             int address = getMemoryIndex(args[1]);
             if (address != -1) {
@@ -66,7 +66,7 @@ public:
                 ACC += MDR;
             }
         }
-        // Segunda forma: ADD D1 D3 NULL
+        // Second way: ADD D1 D3 NULL
         else if (args.size() >= 3 && args[3] == "NULL") {
             int address1 = getMemoryIndex(args[1]);
             int address2 = getMemoryIndex(args[2]);
@@ -80,7 +80,7 @@ public:
                 ACC += MDR;
             }
         }
-        // Tercera forma: ADD D1 D3 D4
+        // Third way: ADD D1 D3 D4
         else if (args.size() >= 4) {
             int address1 = getMemoryIndex(args[1]);
             int address2 = getMemoryIndex(args[2]);
@@ -102,7 +102,7 @@ public:
         ICR++;
     }
     
-    // Metodo para 
+    // Method to store the contents of the ACC into memory
     void STR(vector<string> args) {
         int address = getMemoryIndex(args[1]);
         if (address != -1) {
@@ -113,7 +113,7 @@ public:
         }
     }
     
-    // Metodo para mostrar valores de acuerdo a una direccion de memoria
+    // Method to display values according to a memory address
     void SHW(vector<string> args) {
         if (args[1] == "ACC") {
             cout << "ACC = " << ACC << endl;
@@ -124,7 +124,7 @@ public:
         } else if (args[1] == "MDR") {
             cout << "MDR = " << MDR << endl;
         } else if (args[1] == "UC") {
-            cout << "UC = " << (controlUnit ? "Activo" : "Pausado") << endl;
+            cout << "UC = " << (controlUnit ? "Active" : "Paused") << endl;
         } else {
             int address = getMemoryIndex(args[1]);
             if (address != -1) {
@@ -134,7 +134,7 @@ public:
         ICR++;
     }
     
-    // Memoria de instrucciones para incrementar un valor en 1
+    // Instruction memory for incrementing a value by 1
     void INC(vector<string> args) {
         int address = getMemoryIndex(args[1]);
         if (address != -1) {
@@ -146,7 +146,7 @@ public:
         }
     }
     
-    // Memoria de instrucciones para decrementar un valor en 1
+    // Instruction memory for decrementing a value by 1
     void DEC(vector<string> args) {
         int address = getMemoryIndex(args[1]);
         if (address != -1) {
@@ -158,21 +158,21 @@ public:
         }
     }
     
-    // Metodo para pausar la ejecucion
+    // Method to pause the execution
     void PAUSE() {
         controlUnit = false;
-        cout << "Simulacion Pausada. Presiona ENTER para continuar..." << endl;
+        cout << "Simulation paused. Press ENTER to continue..." << endl;
         cin.get();
         controlUnit = true;
         ICR++;
     }
     
-    // Metodo para finalizar la ejecucion
+    // Method to end the execution
     void END() {
-        cout << "Ejecucion Finalizada." << endl;
+        cout << "Execution completed." << endl;
     }
 
-    // Metodo para ejecutar una instruccion
+    // Method to execute an instruction
     void executeInstruction(vector<string> instruction) {
         string opcode = instruction[0];
         
@@ -195,7 +195,7 @@ public:
         } else if (opcode == "END") {
             END();
         } else {
-            cout << "Instruccion Desconocida: " << opcode << endl;
+            cout << "Unknown instruction: " << opcode << endl;
         }
     }
 };

@@ -1,7 +1,7 @@
 /**
- * Programa para simular el funcionamiento del Ciclo Básico de Instrucciones (CBI) de un procesador.
+ * Program to simulate the operation of the Basic Instructions Cycle (BIC) of a processor.
  * 
- * Autores:
+ * Authors:
  *  - David Esteban Valencia Valencia 
  *  - Jeremy Astaiza
  *  - Juan Pablo Escamilla            
@@ -22,19 +22,19 @@ int main() {
     string filename;
     
     do {
-        cout << "Ingresa el nombre del programa (o 'exit' para salir): ";
+        cout << "Type the program name (or 'exit' to quit): ";
         cin >> filename;
         cin.ignore();
 
         if (filename == "exit" || filename == "EXIT") {
-            cout << "Saliendo del programa." << endl;
+            cout << "Exiting the program." << endl;
             break;
         }
 
         if (simulator.loadProgram(filename)) {
             simulator.executeProgram();
         } else {
-            cout << "No se pudo cargar el programa. Intenta de nuevo." << endl;
+            cout << "The program could not be loaded. Try again." << endl;
         }
     } while (true);
     

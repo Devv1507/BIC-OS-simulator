@@ -20,30 +20,30 @@ public:
         }
     }
     
-    // Metodos para acceder y modificar la memoria
+    // Method to access and modify memory
     int read(int address) {
         if (address >= 0 && address < memorySize) {
             return memoryArray[address];
         }
-        cout << "Error: Direccion de memoria fuera de limites: " << address << endl;
+        cout << "Error: Memory address out of limits: " << address << endl;
         return 0;
     }
     
-    // Metodo para escribir en memoria
+    // Method to write to memory
     void write(int address, int value) {
         if (address >= 0 && address < memorySize) {
             memoryArray[address] = value;
         } else {
-            cout << "Error: Direccion de memoria fuera de limites: " << address << endl;
+            cout << "Error: Memory address out of limits: " << address << endl;
         }
     }
     
-    // Metodo para mostrar un valor especifico de la memoria
+    // Method to display a specific value from the memory
     void show(int address) {
         if (address >= 0 && address < memorySize) {
-            cout << "Valor en memoria de D" << address <<" = " << memoryArray[address] << endl;
+            cout << "Memory value of D" << address <<" = " << memoryArray[address] << endl;
         } else {
-            cout << "Error: Direccion de memoria fuera de limites: " << address << endl;
+            cout << "Error: Memory address out of limits: " << address << endl;
         }
     }
 };

@@ -16,13 +16,13 @@ private:
     CPU* cpu;
     vector<vector<string>> instructions;
     
-    // Metodo para leer instrucciones desde un archivo
+    // Method to read instructions from a file
     vector<vector<string>> readInstructions(const string &filename) {
         ifstream file(filename);
         vector<vector<string>> instructions;
         
         if (!file.is_open()) {
-            cout << "Error: No se pudo abrir el archivo " << filename << endl;
+            cout << "Error: File could not be opened " << filename << endl;
             return instructions;
         }
         string line;
@@ -36,7 +36,7 @@ private:
             }
             
             if (!tokens.empty()) {
-                // Asegurar que cada instruccion tenga al menos 5 elementos
+                // Ensure each instruction has at least 5 elements
                 while (tokens.size() < 5) {
                     tokens.push_back("NULL");
                 }
@@ -55,13 +55,13 @@ public:
         cpu = new CPU(memory);
     }
     
-    // Metodo para cargar un programa desde un archivo
+    // Method to load a program from a file
     bool loadProgram(string filename) {
         instructions = readInstructions(filename);
         return !instructions.empty();
     }
     
-    // Metodo para ejecutar el programa cargado
+    // Method to execute the loaded progam
     void executeProgram() {
         for (const auto &instruction : instructions) {
             cpu->executeInstruction(instruction);

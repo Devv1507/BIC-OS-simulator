@@ -1,9 +1,9 @@
-Instrucciones para ejecutar el código desde windows.
-1. Ecribir en el terminal:
+Instructions to execute the code from windows.
+1. Type in the terminal:
 ![Example](Images/image1.png)
-2. Escribir en el terminal:
+2. Type in the terminal:
 ![Example](Images/image2.png)
-3. Ejecutar los ejercicios dentro de resources:
+3. Execute the exercises inside resources:
 ![Example](Images/image3.png)
-Listo!!!
+Ready!!!
 
