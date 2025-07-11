@@ -10,9 +10,6 @@
  */
 class ALU {
 public:
-    // Constructor
-    ALU() { }
-
     /**
      * @brief Performs the addition of two integers.
      * @param operand1 The first summand.
