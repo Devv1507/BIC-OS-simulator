@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include "memory.h"
+#include "alu.h"
 
 using namespace std;
 
@@ -15,6 +16,7 @@ private:
     int MDR;
     bool controlUnit; // UC
     Memory* memory;
+    ALU* alu;
 
     // Method to obtain memory index from operand
     int getMemoryIndex(string operand) {
@@ -28,34 +30,35 @@ private:
 public:
     // Constructor
     CPU(Memory* mem) : memory(mem) {
-        ACC = 0;
-        ICR = 0;
-        MAR = 0;
-        MDR = 0;
-        controlUnit = true;  
+        this->ACC = 0;
+        this->ICR = 0;
+        this->MAR = 0;
+        this->MDR = 0;
+        this->controlUnit = true;
+        this->alu = new ALU();
     }
     
     // Method to load a value into memory
     void SET(vector<string> args) {
-        int address = getMemoryIndex(args[1]);
+        int address = this->getMemoryIndex(args[1]);
         int value = stoi(args[2]);
         if (address != -1) {
-            memory->write(address, value);
+            this->memory->write(address, value);
         }
     }
     
     // Method to load a value from memory to ACC
     void LDR(vector<string> args) {
-        int address = getMemoryIndex(args[1]);
+        int address = this->getMemoryIndex(args[1]);
         if (address != -1) {
-            MAR = address;
-            MDR = memory->read(address);
-            ACC = MDR;
-            ICR++;
+            this->MAR = address;
+            this->MDR = this->memory->read(address);
+            this->ACC = this->MDR;
+            this->ICR++;
         }
     }
     
-    // Method to sum memory values
+    // Method to sum memory values using ALU
     void ADD(vector<string> args) {
         int validArgs = 0;
         for (int i = 1; i < args.size(); i++) {
@@ -65,66 +68,74 @@ public:
         }
         
         switch (validArgs) {
-            case 1:
-                // First way: ADD D1 NULL NULL
+            case 1: {
+                // First way: ADD D1 NULL NULL (Suma el valor de D1 al Acumulador)
                 if (args.size() >= 2 && args[2] == "NULL") {
-                    int address = getMemoryIndex(args[1]);
+                    int address = this->getMemoryIndex(args[1]);
                     if (address != -1) {
-                        MAR = address;
-                        MDR = memory->read(address);
-                        ACC += MDR;
+                        this->MAR = address;
+                        this->MDR = this->memory->read(address);
+                        // CPU delegates the addition to ALU
+                        this->ACC = this->alu->add(this->ACC, this->MDR);
                     }
                 }
                 break;
-            case 2:
-                // Second way: ADD D1 D3 NULL
+            }
+            case 2: {
+                // Second way: ADD D1 D3 NULL (Suma D1 y D3, guarda en Acumulador)
                 if (args.size() >= 3 && args[3] == "NULL") {
-                    int address1 = getMemoryIndex(args[1]);
-                    int address2 = getMemoryIndex(args[2]);
+                    int address1 = this->getMemoryIndex(args[1]);
+                    int address2 = this->getMemoryIndex(args[2]);
                     if (address1 != -1 && address2 != -1) {
-                        MAR = address1;
-                        MDR = memory->read(address1);
-                        ACC = MDR;
+                        // Leer primer operando
+                        this->MAR = address1;
+                        int operand1 = this->memory->read(address1);
                         
-                        MAR = address2;
-                        MDR = memory->read(address2);
-                        ACC += MDR;
+                        // Leer segundo operando
+                        this->MAR = address2;
+                        int operand2 = this->memory->read(address2);
+
+                        // La CPU delega la suma a la ALU
+                        this->ACC = this->alu->add(operand1, operand2);
                     }
                 }
                 break;
-            case 3:
-                // Third way: ADD D1 D3 D4
+            }
+            case 3: { // Third way: ADD D1 D3 D4 (Suma D1 y D3, guarda en D4 y Acumulador)
                 if (args.size() >= 4) {
-                    int address1 = getMemoryIndex(args[1]);
-                    int address2 = getMemoryIndex(args[2]);
-                    int address3 = getMemoryIndex(args[3]);
+                    int address1 = this->getMemoryIndex(args[1]);
+                    int address2 = this->getMemoryIndex(args[2]);
+                    int address3 = this->getMemoryIndex(args[3]);
                     if (address1 != -1 && address2 != -1 && address3 != -1) {
-                        MAR = address1;
-                        MDR = memory->read(address1);
-                        ACC = MDR;
+                        this->MAR = address1;
+                        int operand1 = this->memory->read(address1);
                         
-                        MAR = address2;
-                        MDR = memory->read(address2);
-                        ACC += MDR;
+                        this->MAR = address2;
+                        int operand2 = this->memory->read(address2);
                         
-                        MAR = address3;
-                        MDR = ACC;
-                        memory->write(address3, MDR);
+                        // CPU delegates the addition of operands to ALU
+                        int result = this->alu->add(operand1, operand2);
+                        
+                        this->ACC = result;
+                        this->MAR = address3;
+                        this->MDR = this->ACC;
+                        this->memory->write(address3, this->MDR);
                     }
                 }
                 break;
+            }
         }
-        ICR++;
+        this->ICR++;
     }
     
     // Method to store the contents of the ACC into memory
     void STR(vector<string> args) {
-        int address = getMemoryIndex(args[1]);
+        int address = this->getMemoryIndex(args[1]);
         if (address != -1) {
-            MAR = address;
-            MDR = ACC;
-            memory->write(address, MDR);
-            ICR++;
+            this->MAR = address;
+            this->MDR = this->ACC;
+            this->memory->write(address, this->MDR);
+            this->ICR++;
         }
     }
     
@@ -133,67 +144,73 @@ public:
         switch (args[1][0]) {
             case 'A':
                 if (args[1] == "ACC") {
-                    cout << "ACC = " << ACC << endl;
+                    cout << "ACC = " << this->ACC << endl;
                 }
                 break;
             case 'I':
                 if (args[1] == "ICR") {
-                    cout << "ICR = " << ICR << endl;
+                    cout << "ICR = " << this->ICR << endl;
                 }
                 break;
             case 'M':
                 if (args[1] == "MAR") {
-                    cout << "MAR = " << MAR << endl;
+                    cout << "MAR = " << this->MAR << endl;
                 } else if (args[1] == "MDR") {
-                    cout << "MDR = " << MDR << endl;
+                    cout << "MDR = " << this->MDR << endl;
                 }
                 break;
             case 'U':
                 if (args[1] == "UC") {
-                    cout << "UC = " << (controlUnit ? "Active" : "Paused") << endl;
+                    cout << "UC = " << (this->controlUnit ? "Active" : "Paused") << endl;
                 }
                 break;
             default:
-                int address = getMemoryIndex(args[1]);
+                int address = this->getMemoryIndex(args[1]);
                 if (address != -1) {
-                    memory->show(address);
+                    this->memory->show(address);
                 }
                 break;
         }
-        ICR++;
+        this->ICR++;
     }
     
-    // Instruction memory for incrementing a value by 1
+    // Instruction memory for incrementing a value by 1 using ALU
     void INC(vector<string> args) {
-        int address = getMemoryIndex(args[1]);
+        int address = this->getMemoryIndex(args[1]);
         if (address != -1) {
-            MAR = address;
-            MDR = memory->read(address);
-            MDR++;  
-            memory->write(address, MDR);
-            ICR++;
+            this->MAR = address;
+            this->MDR = this->memory->read(address);
+            
+            // CPU delegates the increment to ALU
+            int result = this->alu->increment(this->MDR);
+            
+            this->memory->write(address, result);
+            this->ICR++;
         }
     }
     
-    // Instruction memory for decrementing a value by 1
+    // MODIFICADO: Instruction memory for decrementing a value by 1 using ALU
     void DEC(vector<string> args) {
-        int address = getMemoryIndex(args[1]);
+        int address = this->getMemoryIndex(args[1]);
         if (address != -1) {
-            MAR = address;
-            MDR = memory->read(address);
-            MDR--;
-            memory->write(address, MDR);
-            ICR++;
+            this->MAR = address;
+            this->MDR = this->memory->read(address);
+
+            // La CPU delega el decremento a la ALU
+            int result = this->alu->decrement(this->MDR);
+
+            this->memory->write(address, result);
+            this->ICR++;
         }
     }
     
     // Method to pause the execution
     void PAUSE() {
-        controlUnit = false;
+        this->controlUnit = false;
         cout << "Simulation paused. Press ENTER to continue..." << endl;
         cin.get();
-        controlUnit = true;
-        ICR++;
+        this->controlUnit = true;
+        this->ICR++;
     }
     
     // Method to end the execution
