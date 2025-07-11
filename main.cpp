@@ -26,9 +26,14 @@ int main() {
         cin >> filename;
         cin.ignore();
 
-        if (filename == "exit" || filename == "EXIT") {
-            cout << "Exiting the program." << endl;
-            break;
+        switch (filename[0]) {
+            case 'e':
+            case 'E':
+                if (filename == "exit" || filename == "EXIT") {
+                    cout << "Exiting the program." << endl;
+                    return 0;
+                }
+                break;
         }
 
         if (simulator.loadProgram(filename)) {
