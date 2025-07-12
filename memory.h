@@ -22,28 +22,39 @@ public:
     
     // Method to access and modify memory
     int read(int address) {
-        if (address >= 0 && address < memorySize) {
-            return memoryArray[address];
+        switch (address >= 0 && address < memorySize ? 1 : 0) {
+            case 1:
+                return memoryArray[address];
+            case 0:
+            default:
+                cout << "Error: Memory address out of limits: " << address << endl;
+                return 0;
         }
-        cout << "Error: Memory address out of limits: " << address << endl;
-        return 0;
     }
     
     // Method to write to memory
     void write(int address, int value) {
-        if (address >= 0 && address < memorySize) {
-            memoryArray[address] = value;
-        } else {
-            cout << "Error: Memory address out of limits: " << address << endl;
+        switch (address >= 0 && address < memorySize ? 1 : 0) {
+            case 1:
+                memoryArray[address] = value;
+                break;
+            case 0:
+            default:
+                cout << "Error: Memory address out of limits: " << address << endl;
+                break;
         }
     }
     
     // Method to display a specific value from the memory
     void show(int address) {
-        if (address >= 0 && address < memorySize) {
-            cout << "Memory value of D" << address <<" = " << memoryArray[address] << endl;
-        } else {
-            cout << "Error: Memory address out of limits: " << address << endl;
+        switch (address >= 0 && address < memorySize ? 1 : 0) {
+            case 1:
+                cout << "Memory value of D" << address <<" = " << memoryArray[address] << endl;
+                break;
+            case 0:
+            default:
+                cout << "Error: Memory address out of limits: " << address << endl;
+                break;
         }
     }
 };
